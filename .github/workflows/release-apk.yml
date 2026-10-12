@@ -1,0 +1,183 @@
+name: Release APK
+
+# Fork-friendly release workflow: runs on GitHub-hosted runners and signs with
+# the fork owner's own keystore (repository secrets), then publishes the APK
+# to GitHub Releases.
+#
+# Optional secrets (Settings -> Secrets and variables -> Actions):
+#   KEYSTORE           base64 of your .jks/.keystore   (base64 -w0 release.jks)
+#   KEYSTORE_PASSWORD  keystore password
+#   KEY_ALIAS          key alias
+#   KEY_PASSWORD       key password
+#   LASTFM_API_KEY / LASTFM_SECRET   only if you want Last.fm scrobbling
+#
+# Without KEYSTORE the APK is signed with a throwaway key generated for that
+# run. It installs fine, but every build has a different signature, so it
+# cannot update over a previous build.
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "Build variant"
+        type: choice
+        options:
+          - foss
+          - gms
+          - izzy
+        default: foss
+      tag:
+        description: "Release tag (empty = v<versionName>-fork.<run number>)"
+        type: string
+        required: false
+
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VARIANT: ${{ inputs.variant || 'foss' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-cleanup: on-success
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Resolve release tag
+        id: meta
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"
+          elif [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          else
+            VERSION=$(grep -m1 -oP '^\s*versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+            TAG="v${VERSION}-fork.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $TAG (variant: $VARIANT)"
+
+      - name: Build release APK
+        run: ./gradlew --console=plain "assemble${VARIANT^}Release" --warning-mode summary
+        env:
+          METROLIST_APPLICATION_ID: com.metrolist.music
+          METROLIST_APP_NAME: Metrolist
+          PULL_REQUEST: "false"
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
+
+      - name: Sign APK
+        id: sign
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE }}
+          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          APK_DIR="app/build/outputs/apk/${VARIANT}/release"
+          UNSIGNED=$(find "$APK_DIR" -maxdepth 1 -name "*.apk" | head -1)
+          if [ -z "$UNSIGNED" ]; then
+            echo "::error::No APK found in $APK_DIR"
+            ls -la "$APK_DIR" || true
+            exit 1
+          fi
+
+          KS="$RUNNER_TEMP/release.jks"
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$KS"
+            echo "ephemeral=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::KEYSTORE secret not set: signing with a throwaway key. This APK cannot update over a previous build."
+            KS_PASS=$(openssl rand -hex 16)
+            KEY_PASS="$KS_PASS"
+            KEY_ALIAS="metrolist-fork"
+            echo "::add-mask::$KS_PASS"
+            keytool -genkeypair -keystore "$KS" -storepass "$KS_PASS" -keypass "$KEY_PASS" \
+              -alias "$KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Metrolist Fork" >/dev/null
+            echo "ephemeral=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          BUILD_TOOLS=$(ls -d "${ANDROID_HOME:-$ANDROID_SDK_ROOT}"/build-tools/* | sort -V | tail -1)
+
+          case "$VARIANT" in
+            gms) NAME="Metrolist-with-Google-Cast.apk" ;;
+            izzy) NAME="Metrolist-izzy.apk" ;;
+            *) NAME="Metrolist.apk" ;;
+          esac
+
+          mkdir -p release_files
+          "$BUILD_TOOLS/zipalign" -p -f 4 "$UNSIGNED" "$RUNNER_TEMP/aligned.apk"
+          KS_PASS="$KS_PASS" KEY_PASS="$KEY_PASS" "$BUILD_TOOLS/apksigner" sign \
+            --ks "$KS" --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass env:KS_PASS --key-pass env:KEY_PASS \
+            --out "release_files/$NAME" "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" verify --print-certs "release_files/$NAME" | head -3
+
+          rm -f "$KS"
+          echo "apk=release_files/$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Metrolist-${{ env.VARIANT }}
+          path: ${{ steps.sign.outputs.apk }}
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+          APK: ${{ steps.sign.outputs.apk }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" --clobber
+          else
+            gh release create "$TAG" "$APK" \
+              --title "$TAG" \
+              --generate-notes \
+              --target "$GITHUB_SHA"
+          fi
+
+      - name: Summary
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+          EPHEMERAL: ${{ steps.sign.outputs.ephemeral }}
+        run: |
+          {
+            echo "## Release summary"
+            echo "- **Tag**: $TAG"
+            echo "- **Variant**: $VARIANT"
+            echo "- **Release**: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+            if [ "$EPHEMERAL" = "true" ]; then
+              echo "- **Warning**: signed with a throwaway key (no KEYSTORE secret set)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
