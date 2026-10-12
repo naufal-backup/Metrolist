@@ -1592,7 +1592,7 @@ class MusicService :
                                 R.string.action_like
                             },
                         ),
-                    ).setIconResId(if (isLiked == true) R.drawable.ic_heart else R.drawable.ic_heart_outline)
+                    ).setIconResId(if (isLiked == true) R.drawable.favorite else R.drawable.favorite_border)
                     .setSessionCommand(CommandToggleLike)
                     .setEnabled(currentSong.value != null)
                     .build(),
