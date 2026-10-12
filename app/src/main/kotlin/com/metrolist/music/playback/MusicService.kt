@@ -1583,7 +1583,7 @@ class MusicService :
                     .setSessionCommand(CommandToggleShuffle)
                     .build(),
                 CommandButton
-                    .Builder()
+                    .Builder(if (isLiked == true) CommandButton.ICON_HEART_FILLED else CommandButton.ICON_HEART_UNFILLED)
                     .setDisplayName(
                         getString(
                             if (isLiked == true) {
@@ -1592,13 +1592,18 @@ class MusicService :
                                 R.string.action_like
                             },
                         ),
-                    ).setIconResId(if (isLiked == true) R.drawable.ic_heart else R.drawable.ic_heart_outline)
-                    .setSessionCommand(CommandToggleLike)
+                    ).setSessionCommand(CommandToggleLike)
                     .setEnabled(currentSong.value != null)
                     .build(),
                 CommandButton
-                    .Builder()
-                    .setDisplayName(
+                    .Builder(
+                        when (player.repeatMode) {
+                            REPEAT_MODE_OFF -> CommandButton.ICON_REPEAT_OFF
+                            REPEAT_MODE_ONE -> CommandButton.ICON_REPEAT_ONE
+                            REPEAT_MODE_ALL -> CommandButton.ICON_REPEAT_ALL
+                            else -> throw IllegalStateException()
+                        },
+                    ).setDisplayName(
                         getString(
                             when (player.repeatMode) {
                                 REPEAT_MODE_OFF -> R.string.repeat_mode_off
@@ -1607,13 +1612,6 @@ class MusicService :
                                 else -> throw IllegalStateException()
                             },
                         ),
-                    ).setIconResId(
-                        when (player.repeatMode) {
-                            REPEAT_MODE_OFF -> R.drawable.repeat
-                            REPEAT_MODE_ONE -> R.drawable.repeat_one_on
-                            REPEAT_MODE_ALL -> R.drawable.repeat_on
-                            else -> throw IllegalStateException()
-                        },
                     ).setSessionCommand(CommandToggleRepeatMode)
                     .build(),
                 CommandButton
