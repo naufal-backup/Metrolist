@@ -1,6 +1,8 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
 }
 
 android {
