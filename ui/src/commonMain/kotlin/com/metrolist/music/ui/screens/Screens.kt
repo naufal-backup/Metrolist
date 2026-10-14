@@ -6,17 +6,17 @@
 package com.metrolist.music.ui.screens
 
 import androidx.compose.runtime.Immutable
-import com.metrolist.ui.generated.resources.Res
-import com.metrolist.ui.generated.resources.filter_library
-import com.metrolist.ui.generated.resources.group_filled
-import com.metrolist.ui.generated.resources.group_outlined
-import com.metrolist.ui.generated.resources.home
-import com.metrolist.ui.generated.resources.home_filled
-import com.metrolist.ui.generated.resources.home_outlined
-import com.metrolist.ui.generated.resources.library_music_filled
-import com.metrolist.ui.generated.resources.library_music_outlined
-import com.metrolist.ui.generated.resources.search
-import com.metrolist.ui.generated.resources.together
+import metrolist.ui.generated.resources.Res
+import metrolist.ui.generated.resources.filter_library
+import metrolist.ui.generated.resources.group_filled
+import metrolist.ui.generated.resources.group_outlined
+import metrolist.ui.generated.resources.home
+import metrolist.ui.generated.resources.home_filled
+import metrolist.ui.generated.resources.home_outlined
+import metrolist.ui.generated.resources.library_music_filled
+import metrolist.ui.generated.resources.library_music_outlined
+import metrolist.ui.generated.resources.search
+import metrolist.ui.generated.resources.together
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 
