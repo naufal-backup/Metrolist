@@ -8,6 +8,7 @@ on:
       - shared/**
       - desktop/**
       - innertube/**
+      - ui/**
       - app/**
       - gradle/**
       - settings.gradle.kts
@@ -18,6 +19,7 @@ on:
       - shared/**
       - desktop/**
       - innertube/**
+      - ui/**
       - app/**
       - gradle/**
       - settings.gradle.kts
