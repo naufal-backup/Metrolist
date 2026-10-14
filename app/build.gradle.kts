@@ -303,6 +303,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":innertube"))
+    implementation(project(":shared"))
     implementation(project(":ui"))
 
     implementation(libs.ktor.client.core)
