@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
-    application
 }
 
 dependencies {
@@ -24,8 +23,4 @@ compose.desktop {
             packageName = "metrolist"
         }
     }
-}
-
-application {
-    mainClass.set("com.metrolist.desktop.MainKt")
 }
