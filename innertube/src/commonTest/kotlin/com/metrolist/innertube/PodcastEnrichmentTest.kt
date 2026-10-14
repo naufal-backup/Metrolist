@@ -17,13 +17,17 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.Collections
 
 class PodcastEnrichmentTest {
     @Test
     fun `new episodes enrich missing artists and preserve linked or unresolved episodes`() = runBlocking {
-        val lookedUp = mutableListOf<String>()
+        // Enrichment fans out over async coroutines on multiple threads; guard the recording list.
+        val lookedUp = Collections.synchronizedList(mutableListOf<String>())
         val engine = MockEngine { request ->
-            val response = when {
+            // Enrichment fans out over threads; MockEngine handlers must be thread-safe.
+            val response = synchronized(lookedUp) {
+                when {
                 request.url.encodedPath.endsWith("/browse") -> browseResponse
                 request.url.encodedPath.endsWith("/next") -> {
                     val id = Json.parseToJsonElement((request.body as TextContent).text).jsonObject["videoId"]!!.jsonPrimitive.content
@@ -41,6 +45,7 @@ class PodcastEnrichmentTest {
                 }
                 request.url.host == "returnyoutubedislikeapi.com" -> "{}"
                 else -> error("Unexpected request: ${request.url.encodedPath}")
+                }
             }
             respond(response, headers = headersOf(HttpHeaders.ContentType, "application/json"))
         }
