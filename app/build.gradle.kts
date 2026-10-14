@@ -301,6 +301,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":innertube"))
+    implementation(project(":ui"))
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)

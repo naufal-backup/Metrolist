@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(project(":ui"))
     implementation(libs.cmp.runtime)
     implementation(libs.cmp.foundation)
     implementation(libs.cmp.ui)
