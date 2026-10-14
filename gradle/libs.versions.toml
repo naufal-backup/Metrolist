@@ -34,6 +34,8 @@ timber = "5.0.1"
 materialKolor = "5.0.1"
 kuromojiIpadic = "0.9.0"
 koin = "4.2.2"
+coroutines = "1.11.0"
+vlcj = "4.12.1"
 innertubex = "v0.8.4"
 tinypinyin = "2.0.3"
 protobuf = "4.36.2"
@@ -116,6 +118,10 @@ kuromoji-ipadic = { module = "com.atilika.kuromoji:kuromoji-ipadic", version.ref
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
 tinypinyin = { module = "com.github.promeG:tinypinyin", version.ref = "tinypinyin" }
 
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
