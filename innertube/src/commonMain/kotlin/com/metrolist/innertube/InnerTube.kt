@@ -8,6 +8,7 @@ import com.metrolist.innertube.models.response.NextResponse
 import com.metrolist.innertubex.InnerTube as InnerTubeX
 import com.metrolist.innertubex.InnerTubeHttpException
 import com.metrolist.innertube.utils.httpEngineFactory
+import com.metrolist.innertube.utils.installEngineConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
