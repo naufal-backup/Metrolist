@@ -194,7 +194,7 @@ data class LibraryPage(
                             ?.content?.confirmDialogRenderer?.confirmButton?.buttonRenderer
                             ?.command?.musicDeletePrivatelyOwnedEntityCommand?.entityId
                     }
-                    timber.log.Timber.d("Parsed uploaded song: id=$videoId, entityId=$uploadEntityId")
+                    timber.log.logD("Parsed uploaded song: id=$videoId, entityId=$uploadEntityId")
                     val artists =
                         if (isUploaded || uploadEntityId != null) {
                             // Uploads have a dedicated artist column populated from the file's tags.

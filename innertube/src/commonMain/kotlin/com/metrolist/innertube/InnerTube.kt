@@ -7,9 +7,9 @@ import com.metrolist.innertube.models.YouTubeLocale
 import com.metrolist.innertube.models.response.NextResponse
 import com.metrolist.innertubex.InnerTube as InnerTubeX
 import com.metrolist.innertubex.InnerTubeHttpException
+import com.metrolist.innertube.utils.httpEngineFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -138,7 +138,7 @@ class InnerTube(
 
     @OptIn(ExperimentalSerializationApi::class)
     private fun createClient() =
-        HttpClient(OkHttp) {
+        HttpClient(httpEngineFactory) {
             // InnerTubeX handles endpoint-specific status validation and transient retries.
             expectSuccess = false
 

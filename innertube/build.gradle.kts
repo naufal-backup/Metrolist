@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    kotlin("multiplatform")
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -12,7 +13,6 @@ android {
     }
 
     compileOptions {
-        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
@@ -20,22 +20,32 @@ android {
 
 kotlin {
     jvmToolchain(21)
-}
 
-dependencies {
-    if (providers.gradleProperty("useMavenLocalInnerTubeX").isPresent) {
-        api("com.github.MetrolistGroup:innertubex:${libs.versions.innertubex.get()}")
-    } else {
-        api(libs.innertubex)
+    androidTarget()
+    jvm()
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.client.encoding)
+        }
+        androidMain.dependencies {
+            api(libs.innertubex)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.timber)
+        }
+        jvmMain.dependencies {
+            api(libs.innertubex.desktop)
+            implementation(libs.ktor.client.cio)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.ktor.client.mock)
+        }
+        jvmTest.dependencies {
+            implementation(libs.junit)
+        }
     }
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.json)
-    implementation(libs.ktor.client.encoding)
-    implementation(libs.timber)
-    testImplementation(libs.junit)
-    testImplementation(libs.ktor.client.mock)
-
-    coreLibraryDesugaring(libs.desugaring)
 }
