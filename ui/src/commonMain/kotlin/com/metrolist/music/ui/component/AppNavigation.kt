@@ -26,10 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.metrolist.music.ui.screens.Screens
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -73,7 +73,7 @@ fun AppNavigationRail(
             }
             val currentIsSelected by rememberUpdatedState(isSelected)
             val iconRes = remember(isSelected, screen) {
-                if (isSelected) screen.iconIdActive else screen.iconIdInactive
+                if (isSelected) screen.iconActive else screen.iconInactive
             }
 
             val isSearchItem = screen == Screens.Search && onSearchLongClick != null
@@ -117,8 +117,8 @@ fun AppNavigationRail(
                 interactionSource = interactionSource,
                 icon = {
                     Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = stringResource(screen.titleId)
+                        painter = painterResource(iconRes),
+                        contentDescription = stringResource(screen.title)
                     )
                 }
             )
@@ -155,7 +155,7 @@ fun AppNavigationBar(
             }
             val currentIsSelected by rememberUpdatedState(isSelected)
             val iconRes = remember(isSelected, screen) {
-                if (isSelected) screen.iconIdActive else screen.iconIdInactive
+                if (isSelected) screen.iconActive else screen.iconInactive
             }
 
             val isSearchItem = screen == Screens.Search && onSearchLongClick != null
@@ -199,14 +199,14 @@ fun AppNavigationBar(
                 interactionSource = interactionSource,
                 icon = {
                     Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = stringResource(screen.titleId)
+                        painter = painterResource(iconRes),
+                        contentDescription = stringResource(screen.title)
                     )
                 },
                 label = if (!slimNav) {
                     {
                         Text(
-                            text = stringResource(screen.titleId),
+                            text = stringResource(screen.title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
