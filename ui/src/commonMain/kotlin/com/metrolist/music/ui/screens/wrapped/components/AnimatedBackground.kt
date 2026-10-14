@@ -32,7 +32,7 @@ private data class AnimatedElement(
 )
 
 @Composable
-internal fun AnimatedBackground(
+fun AnimatedBackground(
     elementCount: Int = 20,
     shapeTypes: List<ShapeType> = listOf(ShapeType.Circle)
 ) {
