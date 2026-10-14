@@ -298,6 +298,8 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(libs.hilt)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose.viewmodel)
     ksp(libs.hilt.compiler)
 
     implementation(project(":innertube"))
