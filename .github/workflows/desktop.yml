@@ -7,6 +7,8 @@ on:
     paths:
       - shared/**
       - desktop/**
+      - innertube/**
+      - app/**
       - gradle/**
       - settings.gradle.kts
       - gradle.properties
@@ -14,6 +16,8 @@ on:
     paths:
       - shared/**
       - desktop/**
+      - innertube/**
+      - app/**
       - gradle/**
       - settings.gradle.kts
       - gradle.properties
