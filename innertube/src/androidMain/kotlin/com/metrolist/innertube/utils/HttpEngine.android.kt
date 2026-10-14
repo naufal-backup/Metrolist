@@ -3,6 +3,7 @@ package com.metrolist.innertube.utils
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngineFactory
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.okhttp.OkHttpEngineConfig
 import java.io.File
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
@@ -10,7 +11,8 @@ import java.util.concurrent.TimeUnit
 actual val httpEngineFactory: HttpClientEngineFactory<*> = OkHttp
 
 actual fun HttpClientConfig<*>.installEngineConfig(proxy: Proxy?, proxyAuth: String?) {
-    engine {
+    @Suppress("UNCHECKED_CAST")
+    (this as HttpClientConfig<OkHttpEngineConfig>).engine {
         config {
             connectionPool(okhttp3.ConnectionPool(10, 5, TimeUnit.MINUTES))
             connectTimeout(30, TimeUnit.SECONDS)

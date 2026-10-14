@@ -1,0 +1,19 @@
+# Maintainer: naufal-backup
+# Repacks the linux AppImage published by CI into a native pacman package.
+# Unverified until the first AppImage release asset exists (see url below).
+pkgname=metrolist-desktop-bin
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Metrolist YouTube Music client for Linux desktop"
+arch=('x86_64')
+url="https://github.com/naufal-backup/Metrolist-Desktop"
+license=('GPL-3.0-only')
+depends=('fuse2' 'hicolor-icon-theme')
+source=("$pkgname-$pkgver.AppImage::https://github.com/naufal-backup/Metrolist-Desktop/releases/download/v$pkgver/metrolist-$pkgver.AppImage")
+sha256sums=('SKIP')
+
+package() {
+  install -Dm755 "$srcdir/$pkgname-$pkgver.AppImage" "$pkgdir/opt/metrolist/metrolist.AppImage"
+  install -dm755 "$pkgdir/usr/bin"
+  ln -s /opt/metrolist/metrolist.AppImage "$pkgdir/usr/bin/metrolist-desktop"
+}
