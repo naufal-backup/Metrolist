@@ -33,6 +33,7 @@ junit = "4.13.2"
 timber = "5.0.1"
 materialKolor = "5.0.1"
 kuromojiIpadic = "0.9.0"
+koin = "4.2.2"
 innertubex = "v0.8.4"
 tinypinyin = "2.0.3"
 protobuf = "4.36.2"
@@ -112,6 +113,9 @@ innertubex = { module = "com.github.MetrolistGroup.innertubex:innertubex", versi
 innertubex-desktop = { module = "com.github.MetrolistGroup.innertubex:innertubex-desktop", version.ref = "innertubex" }
 
 kuromoji-ipadic = { module = "com.atilika.kuromoji:kuromoji-ipadic", version.ref = "kuromojiIpadic" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 tinypinyin = { module = "com.github.promeG:tinypinyin", version.ref = "tinypinyin" }
 
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
