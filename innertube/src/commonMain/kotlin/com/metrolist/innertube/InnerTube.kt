@@ -157,26 +157,7 @@ class InnerTube(
                 deflate(0.8F)
             }
 
-            engine {
-                config {
-                    connectionPool(okhttp3.ConnectionPool(10, 5, TimeUnit.MINUTES))
-                    connectTimeout(30, TimeUnit.SECONDS)
-                    readTimeout(60, TimeUnit.SECONDS)
-                    writeTimeout(60, TimeUnit.SECONDS)
-                    protocols(listOf(okhttp3.Protocol.HTTP_2, okhttp3.Protocol.HTTP_1_1))
-                    retryOnConnectionFailure(true)
-                    cache(okhttp3.Cache(File(System.getProperty("java.io.tmpdir"), "http_cache"), 50L * 1024L * 1024L))
-                    configuredProxy?.let(::proxy)
-                    configuredProxyAuth?.let { auth ->
-                        proxyAuthenticator { _, response ->
-                            response.request
-                                .newBuilder()
-                                .header("Proxy-Authorization", auth)
-                                .build()
-                        }
-                    }
-                }
-            }
+            installEngineConfig(configuredProxy, configuredProxyAuth)
 
             install(HttpTimeout) {
                 requestTimeoutMillis = 60_000
