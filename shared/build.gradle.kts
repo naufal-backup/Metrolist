@@ -8,6 +8,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":innertube"))
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
