@@ -7,6 +7,7 @@ json = "20260814"
 kotlin = "2.4.20"
 compose = "1.12.1"
 composeMultiplatform = "1.12.1"
+composeMaterial3 = "1.12.0-alpha03"
 lifecycle = "2.11.0"
 material3 = "1.5.0-alpha28"
 appcompat = "1.8.0"
@@ -55,7 +56,7 @@ compose-reorderable = { module = "sh.calvin.reorderable:reorderable", version.re
 cmp-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 cmp-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
+cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
 
 viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
