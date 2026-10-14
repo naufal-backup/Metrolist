@@ -12,6 +12,7 @@ on:
       - gradle/**
       - settings.gradle.kts
       - gradle.properties
+      - .github/workflows/desktop.yml
   pull_request:
     paths:
       - shared/**
@@ -21,6 +22,7 @@ on:
       - gradle/**
       - settings.gradle.kts
       - gradle.properties
+      - .github/workflows/desktop.yml
   workflow_dispatch:
 
 permissions:
